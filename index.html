@@ -8,13 +8,8 @@
 <link rel="stylesheet" href="styles.css">
 <style>
 :root {
-  --bg: #161815;
-  --panel: #1d201b;
-  --lime: #dce99c;
   --display: system-ui, sans-serif;
 }
-.hero { background: #20251c; }
-.hero::before, .hero::after { content: none; }
 .hero-inner {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
@@ -37,7 +32,7 @@
   aspect-ratio: 5 / 4;
   object-fit: cover;
   object-position: center 55%;
-  background: #31352b;
+  background: var(--panel);
   border-radius: .25rem;
 }
 .training-grid .field-photo img { aspect-ratio: 3 / 2; }
@@ -47,7 +42,7 @@
   .hero h1 { font-size: clamp(2.7rem, 10vw, 5rem); }
   .field-photo img { aspect-ratio: 4 / 3; }
 }
-.coach-name { margin: 0 0 .8rem; color: var(--lime); font-weight: 700; }
+.coach-name { margin: 0 0 .8rem; color: var(--paper); font-weight: 700; }
 h1 { font-size: clamp(2.8rem, 8.8vw, 7.4rem); letter-spacing: -.075em; line-height: .96; }
 h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height: 1.05; }
 .intro { max-width: 42ch; margin-top: 1.25rem; }
@@ -56,17 +51,14 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
 .programs li::before { width: .3rem; height: .3rem; border-radius: 50%; transform: none; }
 .plans article:last-child { border-color: var(--line); }
 .price { font-size: clamp(2rem, 4vw, 3.1rem); letter-spacing: -.05em; }
-.contact { background: #262c22; color: var(--paper); border-top: 1px solid var(--line); }
-.contact .button { background: var(--lime); color: var(--bg); border-color: var(--lime); }
-.contact a:focus-visible { outline-color: var(--lime); }
 .booking { border-top: 1px solid var(--line); }
 .booking-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 6vw, 5rem); }
 .booking-copy p:last-child, .booking-help { color: var(--muted); }
 .booking-form { display: grid; gap: .9rem; }
 .booking-form[hidden] { display: none; }
 .booking-form label { display: grid; gap: .3rem; font-weight: 700; }
-.booking-form input, .booking-form select { min-width: 0; width: 100%; padding: .7rem; border: 1px solid #65695b; background: var(--panel); color: var(--paper); font: inherit; }
-.booking-form :is(input, select):focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+.booking-form input, .booking-form select { min-width: 0; width: 100%; padding: .7rem; border: 1px solid #777777; background: var(--panel); color: var(--paper); font: inherit; }
+.booking-form :is(input, select):focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 .booking-time { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
 .booking-form .button { justify-self: start; font: inherit; font-weight: 800; cursor: pointer; }
 .booking-help { margin: 0; font-size: .9rem; }
