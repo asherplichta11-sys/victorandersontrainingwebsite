@@ -12,12 +12,16 @@
 }
 .hero-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
   align-items: center;
   gap: clamp(1.5rem, 4vw, 4rem);
   padding-block: clamp(2.5rem, 5vw, 4.5rem);
 }
 .hero h1 { font-size: clamp(2.8rem, 6.2vw, 6rem); text-wrap: balance; }
+@media (min-width: 761px) {
+  .hero-inner > .field-photo { grid-column: 1; grid-row: 1; }
+  .hero-copy { grid-column: 2; grid-row: 1; }
+}
 .training-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
@@ -76,7 +80,7 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
 <main id="main">
 <section class="hero">
 <div class="wrap hero-inner">
-<div>
+<div class="hero-copy">
 <p class="coach-name">Training with Victor Anderson</p>
 <h1>Train. Compete.<br>Dominate.</h1>
 <p class="intro">Strength, speed, and sport-specific training for athletes of all ages.</p>
