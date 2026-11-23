@@ -7,6 +7,7 @@
 <title>Book a session | Victory Sports Performance</title>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="training-pages.css">
+<style>.booking-form label[hidden] { display: none; }</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -20,7 +21,7 @@
   <div class="wrap section booking-grid">
     <div class="booking-copy">
       <h1 id="booking-heading">Request a session</h1>
-      <p>Training is available Monday, Tuesday, and Wednesday. Tell Vic what you’re interested in and when you’d like to train. He’ll text you back to confirm a time.</p>
+      <p>November 23–28, 2026 has a special schedule with four one-hour sessions daily from 11 AM to 3 PM Eastern. Each session is limited to 10 athletes. Text your request and wait for Vic to confirm your spot. Regular training dates are Monday through Wednesday.</p>
     </div>
     <form class="booking-form" id="booking-form" aria-describedby="booking-help" hidden>
       <label>Your name <input name="clientName" autocomplete="name" maxlength="80" required></label>
@@ -41,8 +42,17 @@
       <div class="booking-calendar" id="booking-calendar" role="group" aria-label="Preferred date" aria-describedby="booking-days"></div>
       <input type="hidden" name="date">
       <p class="booking-help" id="booking-selection" role="status" hidden></p>
-      <label>Preferred time <input type="time" name="time" required></label>
-      <p class="booking-help" id="booking-days">Choose a Monday, Tuesday, or Wednesday.</p>
+      <label id="regular-time-label">Preferred time <input type="time" name="time" required></label>
+      <label id="special-time-label" hidden>Session time (Eastern)
+        <select name="session" required disabled>
+          <option value="">Choose a session</option>
+          <option value="11:00">11 AM–noon</option>
+          <option value="12:00">Noon–1 PM</option>
+          <option value="13:00">1–2 PM</option>
+          <option value="14:00">2–3 PM</option>
+        </select>
+      </label>
+      <p class="booking-help" id="booking-days">Choose November 23–28 for the special schedule, or an upcoming Monday, Tuesday, or Wednesday for regular training.</p>
       <button class="button" type="submit">Open text message</button>
       <p class="booking-help" id="booking-help">Tap Send in your texting app, or <a href="tel:+15026413631">call 502-641-3631</a> to book.</p>
     </form>
@@ -59,6 +69,9 @@
   const planField = bookingForm.elements.namedItem('plan');
   const dateField = bookingForm.elements.namedItem('date');
   const timeField = bookingForm.elements.namedItem('time');
+  const sessionField = bookingForm.elements.namedItem('session');
+  const regularTimeLabel = document.querySelector('#regular-time-label');
+  const specialTimeLabel = document.querySelector('#special-time-label');
 
   const previousMonth = document.querySelector('#previous-month');
   const nextMonth = document.querySelector('#next-month');
@@ -75,9 +88,23 @@
       .map((part, index) => String(part).padStart(index === 0 ? 4 : 2, '0')).join('-');
   }
 
+  function isSpecialWeek(key) {
+    return key >= '2026-11-23' && key <= '2026-11-28';
+  }
+
+  function updateTimeFields() {
+    const special = isSpecialWeek(dateField.value);
+    sessionField.disabled = !special;
+    specialTimeLabel.hidden = !special;
+    timeField.disabled = special;
+    regularTimeLabel.hidden = special;
+    sessionField.value = '';
+  }
+
   function isBookable(date) {
     const weekday = date.getDay();
-    return weekday >= 1 && weekday <= 3 && dateKey(date) >= dateKey(new Date());
+    const key = dateKey(date);
+    return key >= dateKey(new Date()) && (isSpecialWeek(key) || (weekday >= 1 && weekday <= 3));
   }
 
   function renderMonth() {
@@ -108,6 +135,7 @@
         calendar.querySelector('[aria-pressed="true"]')?.setAttribute('aria-pressed', 'false');
         button.setAttribute('aria-pressed', 'true');
         dateField.value = dateKey(date);
+        updateTimeFields();
         selection.hidden = false;
         selection.textContent = 'Selected: ' + dayFormat.format(date) + ', ' + year;
       });
@@ -137,7 +165,7 @@
     if (!bookingForm.reportValidity()) return;
     if (!dateField.value || !isBookable(new Date(dateField.value + 'T12:00:00'))) {
       selection.hidden = false;
-      selection.textContent = 'Choose an upcoming Monday, Tuesday, or Wednesday.';
+      selection.textContent = 'Choose a date available on the calendar.';
       calendar.querySelector('button:not(:disabled)')?.focus();
       return;
     }
@@ -145,9 +173,11 @@
     const plan = planField.selectedOptions[0].textContent;
     const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' })
       .format(new Date(dateField.value + 'T12:00:00'));
+    const special = isSpecialWeek(dateField.value);
     const [hour, minute] = timeField.value.split(':').map(Number);
     const time = `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
-    const message = `Hi Victor, I'm ${name}. I'd like to book ${plan} on ${date} at ${time}. Is that time available?`;
+    const when = special ? sessionField.selectedOptions[0].textContent + ' Eastern' : time;
+    const message = `Hi Victor, I'm ${name}. I'd like to book ${plan} on ${date} at ${when}. Is there a spot available?`;
     const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent)
       || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const separator = isAppleMobile ? '&' : '?';
