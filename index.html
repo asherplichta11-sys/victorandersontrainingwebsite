@@ -59,6 +59,9 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
 .booking-form { display: grid; gap: .9rem; }
 .booking-form[hidden] { display: none; }
 .booking-form label { display: grid; gap: .3rem; font-weight: 700; }
+.booking-month { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.booking-month button { min-width: 2.75rem; }
+.booking-month button:disabled { opacity: .5; cursor: default; }
 .booking-form input, .booking-form select { min-width: 0; width: 100%; padding: .7rem; border: 1px solid #777777; background: var(--panel); color: var(--paper); font: inherit; }
 .booking-form :is(input, select):focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 .booking-time { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
@@ -129,8 +132,13 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
           <option value="elite">Elite — $250/month</option>
         </select>
       </label>
+      <div class="booking-month" aria-label="Booking month" role="group">
+        <button class="button outline" type="button" id="previous-month" aria-label="Previous month">‹</button>
+        <span id="booking-month" aria-live="polite"></span>
+        <button class="button outline" type="button" id="next-month" aria-label="Next month">›</button>
+      </div>
       <div class="booking-time">
-        <label>Preferred date <input type="date" name="date" aria-describedby="booking-days" required></label>
+        <label>Preferred date <select name="date" aria-describedby="booking-days" required></select></label>
         <label>Preferred time <input type="time" name="time" required></label>
       </div>
       <p class="booking-help" id="booking-days">Choose a Monday, Tuesday, or Wednesday.</p>
@@ -151,24 +159,49 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
   const dateField = bookingForm.elements.namedItem('date');
   const timeField = bookingForm.elements.namedItem('time');
 
-  function setEarliestDate() {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    dateField.min = `${now.getFullYear()}-${month}-${day}`;
+  const previousMonth = document.querySelector('#previous-month');
+  const nextMonth = document.querySelector('#next-month');
+  const monthLabel = document.querySelector('#booking-month');
+  const monthFormat = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+  const dayFormat = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  const now = new Date();
+  let shownMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  function dateKey(date) {
+    return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+      .map((part, index) => String(part).padStart(index === 0 ? 4 : 2, '0')).join('-');
   }
 
-  function validateBookingDay() {
-    const weekday = new Date(dateField.value + 'T00:00:00Z').getUTCDay();
-    const allowed = weekday >= 1 && weekday <= 3;
-    dateField.setCustomValidity(dateField.value && !allowed
-      ? 'Choose a Monday, Tuesday, or Wednesday.'
-      : '');
+  function isBookable(date) {
+    const weekday = date.getDay();
+    return weekday >= 1 && weekday <= 3 && dateKey(date) >= dateKey(new Date());
   }
 
-  setEarliestDate();
-  dateField.addEventListener('input', validateBookingDay);
-  dateField.addEventListener('change', validateBookingDay);
+  function renderMonth() {
+    const year = shownMonth.getFullYear();
+    const month = shownMonth.getMonth();
+    const days = new Date(year, month + 1, 0).getDate();
+    monthLabel.textContent = monthFormat.format(shownMonth);
+    previousMonth.disabled = dateKey(shownMonth).slice(0, 7) <= dateKey(new Date()).slice(0, 7);
+    dateField.replaceChildren(new Option('Choose a date', ''));
+    for (let day = 1; day <= days; day++) {
+      const date = new Date(year, month, day, 12);
+      const option = new Option(dayFormat.format(date), dateKey(date));
+      option.disabled = !isBookable(date);
+      dateField.add(option);
+    }
+    dateField.setCustomValidity('');
+  }
+
+  function changeMonth(offset) {
+    shownMonth = new Date(shownMonth.getFullYear(), shownMonth.getMonth() + offset, 1);
+    renderMonth();
+  }
+
+  previousMonth.addEventListener('click', () => changeMonth(-1));
+  nextMonth.addEventListener('click', () => changeMonth(1));
+  dateField.addEventListener('change', () => dateField.setCustomValidity(''));
+  renderMonth();
   bookingForm.hidden = false;
   document.querySelectorAll('[data-plan]').forEach((link) => {
     link.addEventListener('click', () => { planField.value = link.dataset.plan; });
@@ -177,10 +210,10 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
 
   bookingForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    setEarliestDate();
     const name = nameField.value.trim();
     nameField.setCustomValidity(name ? '' : 'Enter your name.');
-    validateBookingDay();
+    dateField.setCustomValidity(!dateField.value || isBookable(new Date(dateField.value + 'T12:00:00'))
+      ? '' : 'Choose an upcoming Monday, Tuesday, or Wednesday.');
     if (!bookingForm.reportValidity()) return;
 
     const plan = planField.selectedOptions[0].textContent;
