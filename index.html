@@ -110,12 +110,13 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
 <article><h3>Elite</h3><p>3 days/week</p><div class="price">$250<small>/month</small></div><a class="button outline" href="#booking" data-plan="elite" aria-label="Request the Elite plan">Request plan</a></article>
 </div>
 <div class="single"><div><h3>Individual sessions</h3><div class="price">$50<small>/session</small></div></div><a class="button outline" href="#booking" data-plan="individual">Request a session</a></div>
+<div class="single"><div><h3>Pay for training</h3><p>Once Vic confirms your booking, pay <strong>@VSP20</strong> on Venmo.</p></div><a class="button" href="https://venmo.com/u/VSP20">Pay with Venmo</a></div>
 </div></section>
 <section class="booking" id="booking" aria-labelledby="booking-heading">
   <div class="wrap section booking-grid">
     <div class="booking-copy">
       <h2 id="booking-heading">Request a session</h2>
-      <p>Tell Vic what you’re interested in and when you’d like to train. He’ll text you back to confirm a time.</p>
+      <p>Training is available Monday, Tuesday, and Wednesday. Tell Vic what you’re interested in and when you’d like to train. He’ll text you back to confirm a time.</p>
     </div>
     <form class="booking-form" id="booking-form" aria-describedby="booking-help" hidden>
       <label>Your name <input name="clientName" autocomplete="name" maxlength="80" required></label>
@@ -129,9 +130,10 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
         </select>
       </label>
       <div class="booking-time">
-        <label>Preferred date <input type="date" name="date" required></label>
+        <label>Preferred date <input type="date" name="date" aria-describedby="booking-days" required></label>
         <label>Preferred time <input type="time" name="time" required></label>
       </div>
+      <p class="booking-help" id="booking-days">Choose a Monday, Tuesday, or Wednesday.</p>
       <button class="button" type="submit">Open text message</button>
       <p class="booking-help" id="booking-help">Tap Send in your texting app, or <a href="tel:+15026413631">call 502-641-3631</a> to book.</p>
     </form>
@@ -156,7 +158,17 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
     dateField.min = `${now.getFullYear()}-${month}-${day}`;
   }
 
+  function validateBookingDay() {
+    const weekday = new Date(dateField.value + 'T00:00:00Z').getUTCDay();
+    const allowed = weekday >= 1 && weekday <= 3;
+    dateField.setCustomValidity(dateField.value && !allowed
+      ? 'Choose a Monday, Tuesday, or Wednesday.'
+      : '');
+  }
+
   setEarliestDate();
+  dateField.addEventListener('input', validateBookingDay);
+  dateField.addEventListener('change', validateBookingDay);
   bookingForm.hidden = false;
   document.querySelectorAll('[data-plan]').forEach((link) => {
     link.addEventListener('click', () => { planField.value = link.dataset.plan; });
@@ -168,6 +180,7 @@ h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height:
     setEarliestDate();
     const name = nameField.value.trim();
     nameField.setCustomValidity(name ? '' : 'Enter your name.');
+    validateBookingDay();
     if (!bookingForm.reportValidity()) return;
 
     const plan = planField.selectedOptions[0].textContent;

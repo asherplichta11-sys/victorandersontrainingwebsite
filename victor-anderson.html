@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Meet Victor Anderson and explore his football career at St. Xavier and the University of Louisville.">
+<meta name="description" content="Meet Victor Anderson and explore his football career at St. Xavier, the University of Louisville, and with the CFL’s Montreal Alouettes.">
 <title>Victor Anderson | Victory Sports Performance</title>
 <link rel="stylesheet" href="styles.css">
 <style>
@@ -18,10 +18,12 @@
 .bio-career h2 { font-size:clamp(2rem,5vw,3.4rem); letter-spacing:-.05em; }
 .bio-career h2 { margin-bottom:1.5rem; }
 .career-story { max-width:75ch; margin:0; line-height:1.8; }
+.cfl-career { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,18rem); align-items:center; gap:clamp(1.5rem,5vw,4rem); border-top:1px solid var(--line); }
 .bio-cta { border-top:1px solid var(--line); background:var(--panel); }
 .bio-cta h2 { font-size:clamp(2rem,5vw,3rem); margin-bottom:1.25rem; }
 .button { border-radius:.25rem; }
-@media (max-width:700px) { .bio-grid { grid-template-columns:1fr; } }
+@media (max-width:700px) { .bio-grid,.cfl-career { grid-template-columns:1fr; }
+  .cfl-career figure { max-width:18rem; } }
 </style>
 </head>
 <body>
@@ -47,6 +49,17 @@
     <h2>Football career</h2>
     <p class="career-story">Vic was already making a name for himself as a sophomore. He ran for 1,039 yards and 27 touchdowns that season, helped St. Xavier win the Class 4A state championship, and earned MVP honors in the title game. As a junior, he rushed for 1,576 yards and another 27 touchdowns as the Tigers returned to the state final. He topped 1,400 rushing yards and scored 22 touchdowns as a senior. He finished his high school career with 4,008 rushing yards and 75 touchdowns, and St. Xavier went 37–4 over those three seasons. Vic became Louisville’s first Big East Rookie of the Year in 2008. He ran for 1,047 yards and eight touchdowns, and The Sporting News named him a first-team freshman All-American. His biggest game came against Kansas State, when he rushed for 176 yards and three touchdowns to earn Big East Offensive Player of the Week. Against Middle Tennessee, he ran for 161 yards, including an 88-yard touchdown. Against Connecticut, he scored both on the ground and through the air. Vic made an impact as a receiver and kick returner, too. In 2010, he averaged 30.2 yards per kickoff return, seventh in the nation. As a senior, he caught 28 passes for 232 yards and a touchdown. He was a Louisville captain for his final game against NC State. Louisville’s postgame notes credited him with 2,348 career rushing yards, ninth in school history when he finished.</p>
     <p class="bio-source">Louisville Athletics records · <a href="https://gocards.com/sports/football/roster/victor-anderson/974">Player bio</a> · <a href="https://gocards.com/sports/2019/7/10/all-americans">All-Americans</a> · <a href="https://stats.gocards.com/custompages/sports/m-footbl/2011-2012/teamcume.htm">2011 stats</a> · <a href="https://gocards.com/news/2011/12/28/Louisville_NC_State_Postgame_Notes">Final career notes</a></p>
+  </section>
+  <section class="wrap section bio-career cfl-career" aria-labelledby="cfl-heading">
+    <div>
+      <h2 id="cfl-heading">Montreal Alouettes</h2>
+      <p class="career-story">After Louisville, Vic played running back for the Montreal Alouettes in the Canadian Football League in 2012.</p>
+      <p class="bio-source"><a href="https://www.cfl.ca/2012/09/28/five-and-alive-burris-leads-cats-to-win-over-als/">CFL game recap</a></p>
+    </div>
+    <figure class="bio-photo">
+      <img src="images/vic-cfl.jpg" alt="Trading card showing Victor Anderson wearing number 20 for the Montreal Alouettes" width="299" height="400" loading="lazy" decoding="async">
+      <figcaption>Vic in his Montreal Alouettes uniform.</figcaption>
+    </figure>
   </section>
   <section class="bio-cta"><div class="wrap section"><h2>Train with Vic</h2><a class="button" href="./#booking">Request a session</a></div></section>
 </main>
