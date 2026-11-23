@@ -21,7 +21,7 @@
   <div class="wrap section booking-grid">
     <div class="booking-copy">
       <h1 id="booking-heading">Request a session</h1>
-      <p>November 23–28, 2026 has a special schedule with four one-hour sessions daily from 11 AM to 3 PM Eastern. Each session is limited to 10 athletes. Text your request and wait for Vic to confirm your spot. Regular training dates are Monday through Wednesday.</p>
+      <p>November 23–25, 2026 has a special schedule with four one-hour sessions daily from 11 AM to 3 PM Eastern. Each session is limited to 10 athletes. Text your request and wait for Vic to confirm your spot. Regular training dates are Monday through Wednesday.</p>
     </div>
     <form class="booking-form" id="booking-form" aria-describedby="booking-help" hidden>
       <label>Your name <input name="clientName" autocomplete="name" maxlength="80" required></label>
@@ -52,7 +52,7 @@
           <option value="14:00">2–3 PM</option>
         </select>
       </label>
-      <p class="booking-help" id="booking-days">Choose November 23–28 for the special schedule, or an upcoming Monday, Tuesday, or Wednesday for regular training.</p>
+      <p class="booking-help" id="booking-days">Choose November 23–25 for the special schedule, or an upcoming Monday, Tuesday, or Wednesday for regular training.</p>
       <button class="button" type="submit">Open text message</button>
       <p class="booking-help" id="booking-help">Tap Send in your texting app, or <a href="tel:+15026413631">call 502-641-3631</a> to book.</p>
     </form>
@@ -89,7 +89,7 @@
   }
 
   function isSpecialWeek(key) {
-    return key >= '2026-11-23' && key <= '2026-11-28';
+    return key >= '2026-11-23' && key <= '2026-11-25';
   }
 
   function updateTimeFields() {
@@ -104,7 +104,7 @@
   function isBookable(date) {
     const weekday = date.getDay();
     const key = dateKey(date);
-    return key >= dateKey(new Date()) && (isSpecialWeek(key) || (weekday >= 1 && weekday <= 3));
+    return key >= dateKey(new Date()) && weekday >= 1 && weekday <= 3;
   }
 
   function renderMonth() {
