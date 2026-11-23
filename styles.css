@@ -76,3 +76,96 @@ h3 { margin: 0; font-size: 1.13rem; }
 .hero .intro, .bio-hero .intro, .bio-hero .bio-photo figcaption { color: var(--on-red-muted); }
 .hero .button, .bio-hero .button { background: var(--paper); border-color: var(--paper); color: var(--ink); }
 .hero .button:hover, .bio-hero .button:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+
+/* Victory visual identity */
+:root {
+  --bg: #101011;
+  --panel: #19191b;
+  --line: #37373b;
+  --red: #c31332;
+  --red-deep: #a30d29;
+  --ink: #101011;
+}
+body { font-optical-sizing: auto; }
+.header { min-height: 5rem; }
+.header .mark, .footer .mark {
+  width: 2.65rem;
+  font: italic 950 1.75rem/1 system-ui, sans-serif;
+  clip-path: polygon(0 0, 100% 0, 100% 74%, 76% 100%, 0 100%);
+}
+.brand-name { font-size: 1.12rem; font-weight: 950; letter-spacing: -.04em; }
+.brand-name span { display: block; margin-top: .35rem; font-size: .56rem; letter-spacing: .14em; text-transform: uppercase; }
+.header nav { gap: clamp(.8rem, 3vw, 2.4rem); font-size: .91rem; font-weight: 700; }
+.header nav [aria-current], .header nav a:hover { text-decoration: underline; text-underline-offset: .3em; }
+.header .button, .button { min-height: 2.75rem; }
+main .hero, main .bio-hero {
+  background: linear-gradient(112deg, #171719 0%, #241419 46%, #970f2a 100%);
+  border-block: 1px solid var(--line);
+}
+.hero .hero-inner { gap: clamp(2rem, 6vw, 6rem); padding-block: clamp(2.8rem, 6vw, 5rem); }
+.hero .hero-copy h1 {
+  font-size: clamp(3.7rem, 8.5vw, 8.6rem);
+  line-height: .83;
+  letter-spacing: -.085em;
+  text-transform: uppercase;
+}
+.hero .hero-copy h1 em {
+  color: #ff6b85;
+}
+.hero .coach-name, .bio-hero .bio-label {
+  font-size: .8rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 1.4rem;
+}
+.hero .hero-copy .intro { margin-top: 1.6rem; }
+.hero .field-photo {
+  display: grid;
+  justify-items: center;
+  padding: clamp(.45rem, 1.1vw, .9rem);
+  border: 1px solid #ffffff42;
+  background: #10101156;
+}
+.hero .field-photo img { max-width: 24rem; }
+#training h2, #pricing h2, #booking h2, .bio-career h2 {
+  text-wrap: balance;
+}
+#training .programs { gap: .5rem; }
+#training .programs li {
+  gap: .6rem;
+  border: 1px solid var(--line);
+  border-radius: .2rem;
+  padding: .7rem;
+  background: var(--panel);
+  font-size: .9rem;
+}
+#training .field-photo { grid-template-columns: .82fr 1.18fr; align-items: center; }
+#training .field-photo img { background: var(--bg); }
+#pricing .plans article, #pricing .single {
+  border-top: 3px solid var(--red);
+  border-radius: .3rem;
+}
+#pricing .plans .price { margin-top: .5rem; }
+#pricing .plans .button { margin-top: auto; }
+#pricing .payment-row { border-top-color: var(--line); background: var(--panel); }
+#pricing .payment-row p { margin: .25rem 0 0; color: var(--muted); }
+#booking .booking-form {
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--red);
+  border-radius: .3rem;
+  background: var(--panel);
+  padding: clamp(.8rem, 3vw, 2rem);
+}
+#booking .booking-calendar button { background: var(--bg); }
+#booking .booking-calendar button[aria-pressed="true"] { background: var(--red); }
+#booking .booking-month { justify-content: space-between; }
+.bio-hero .bio-grid h1 { text-transform: uppercase; }
+.bio-hero .bio-photo { padding: .65rem; border: 1px solid #ffffff42; background: #10101156; }
+@media (max-width: 760px) {
+  .hero .hero-copy h1 { font-size: clamp(3rem, 11.5vw, 6.5rem); }
+}
+@media (max-width: 360px) {
+  .hero .hero-copy h1 { font-size: clamp(2.45rem, 12vw, 2.8rem); }
+  .header nav { gap: .65rem; }
+}
