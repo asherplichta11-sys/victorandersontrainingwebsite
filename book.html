@@ -7,7 +7,7 @@
 <title>Book a session | Victory Sports Performance</title>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="training-pages.css">
-
+<style>.booking-form label[hidden] { display: none; }</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -18,14 +18,45 @@
 </header>
 <main id="main" class="inner-page">
 <section class="booking" id="booking" aria-labelledby="booking-heading">
-  <div class="wrap section">
-    <h1 id="booking-heading">Book a training session</h1>
-    <p class="intro">Choose an available session and save your spot through Calendly.</p>
-    <p id="booking-plan" hidden></p>
-    <div class="actions">
-      <a class="button" href="https://calendly.com/asher-plichta11/new-meeting">See available sessions</a>
-      <a class="text-link" href="tel:+15026413631">Questions? Call Vic</a>
+  <div class="wrap section booking-grid">
+    <div class="booking-copy">
+      <h1 id="booking-heading">Request a session</h1>
+      <p>November 23–25, 2026 has a special schedule with four one-hour sessions daily from 11 AM to 3 PM Eastern. Each session is limited to 10 athletes. Text your request and wait for Vic to confirm your spot. Regular training dates are Monday through Wednesday.</p>
     </div>
+    <form class="booking-form" id="booking-form" aria-describedby="booking-help" hidden>
+      <label>Your name <input name="clientName" autocomplete="name" maxlength="80" required></label>
+      <label>Training option
+        <select name="plan" required>
+          <option value="">Choose an option</option>
+          <option value="individual">Individual session — $50/session</option>
+          <option value="starter">Starter — $140/month</option>
+          <option value="development">Development — $200/month</option>
+          <option value="elite">Elite — $250/month</option>
+        </select>
+      </label>
+      <div class="booking-month" aria-label="Booking month" role="group">
+        <button class="button outline" type="button" id="previous-month" aria-label="Previous month">‹</button>
+        <span id="booking-month" aria-live="polite"></span>
+        <button class="button outline" type="button" id="next-month" aria-label="Next month">›</button>
+      </div>
+      <div class="booking-calendar" id="booking-calendar" role="group" aria-label="Preferred date" aria-describedby="booking-days"></div>
+      <input type="hidden" name="date">
+      <p class="booking-help" id="booking-selection" role="status" hidden></p>
+      <label id="regular-time-label">Preferred time <input type="time" name="time" required></label>
+      <label id="special-time-label" hidden>Session time (Eastern)
+        <select name="session" required disabled>
+          <option value="">Choose a session</option>
+          <option value="11:00">11 AM–noon</option>
+          <option value="12:00">Noon–1 PM</option>
+          <option value="13:00">1–2 PM</option>
+          <option value="14:00">2–3 PM</option>
+        </select>
+      </label>
+      <p class="booking-help" id="booking-days">Choose November 23–25 for the special schedule, or an upcoming Monday, Tuesday, or Wednesday for regular training.</p>
+      <button class="button" type="submit">Open text message</button>
+      <p class="booking-help" id="booking-help">Tap Send in your texting app, or <a href="tel:+15026413631">call 502-641-3631</a> to book.</p>
+    </form>
+    <noscript><p><a href="tel:+15026413631">Call 502-641-3631 to request a session.</a></p></noscript>
   </div>
 </section>
 </main>
@@ -33,16 +64,125 @@
 
 
 <script>
-  const plan = new URLSearchParams(window.location.search).get('plan');
-  const names = new Map([
-    ['starter', 'Starter'], ['development', 'Development'],
-    ['elite', 'Elite'], ['individual', 'Individual session']
-  ]);
-  if (names.has(plan)) {
-    const summary = document.querySelector('#booking-plan');
-    summary.textContent = 'Selected: ' + names.get(plan) + '. Confirm your training option with Vic.';
-    summary.hidden = false;
+  const bookingForm = document.querySelector('#booking-form');
+  const nameField = bookingForm.elements.namedItem('clientName');
+  const planField = bookingForm.elements.namedItem('plan');
+  const dateField = bookingForm.elements.namedItem('date');
+  const timeField = bookingForm.elements.namedItem('time');
+  const sessionField = bookingForm.elements.namedItem('session');
+  const regularTimeLabel = document.querySelector('#regular-time-label');
+  const specialTimeLabel = document.querySelector('#special-time-label');
+
+  const previousMonth = document.querySelector('#previous-month');
+  const nextMonth = document.querySelector('#next-month');
+  const monthLabel = document.querySelector('#booking-month');
+  const calendar = document.querySelector('#booking-calendar');
+  const selection = document.querySelector('#booking-selection');
+  const monthFormat = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+  const dayFormat = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  const now = new Date();
+  let shownMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  function dateKey(date) {
+    return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+      .map((part, index) => String(part).padStart(index === 0 ? 4 : 2, '0')).join('-');
   }
+
+  function isSpecialWeek(key) {
+    return key >= '2026-11-23' && key <= '2026-11-25';
+  }
+
+  function updateTimeFields() {
+    const special = isSpecialWeek(dateField.value);
+    sessionField.disabled = !special;
+    specialTimeLabel.hidden = !special;
+    timeField.disabled = special;
+    regularTimeLabel.hidden = special;
+    sessionField.value = '';
+  }
+
+  function isBookable(date) {
+    const weekday = date.getDay();
+    const key = dateKey(date);
+    return key >= dateKey(new Date()) && weekday >= 1 && weekday <= 3;
+  }
+
+  function renderMonth() {
+    const year = shownMonth.getFullYear();
+    const month = shownMonth.getMonth();
+    const days = new Date(year, month + 1, 0).getDate();
+    monthLabel.textContent = monthFormat.format(shownMonth);
+    previousMonth.disabled = dateKey(shownMonth).slice(0, 7) <= dateKey(new Date()).slice(0, 7);
+    calendar.replaceChildren();
+    for (const weekday of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']) {
+      const heading = document.createElement('span');
+      heading.textContent = weekday;
+      heading.setAttribute('aria-hidden', 'true');
+      calendar.append(heading);
+    }
+
+    const offset = (shownMonth.getDay() + 6) % 7;
+    for (let day = 1; day <= days; day++) {
+      const date = new Date(year, month, day, 12);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = day;
+      button.disabled = !isBookable(date);
+      button.setAttribute('aria-label', dayFormat.format(date));
+      button.setAttribute('aria-pressed', String(dateField.value === dateKey(date)));
+      if (day === 1) button.style.gridColumnStart = offset + 1;
+      button.addEventListener('click', () => {
+        calendar.querySelector('[aria-pressed="true"]')?.setAttribute('aria-pressed', 'false');
+        button.setAttribute('aria-pressed', 'true');
+        dateField.value = dateKey(date);
+        updateTimeFields();
+        selection.hidden = false;
+        selection.textContent = 'Selected: ' + dayFormat.format(date) + ', ' + year;
+      });
+      calendar.append(button);
+    }
+  }
+
+  function changeMonth(offset) {
+    shownMonth = new Date(shownMonth.getFullYear(), shownMonth.getMonth() + offset, 1);
+    renderMonth();
+  }
+
+  previousMonth.addEventListener('click', () => changeMonth(-1));
+  nextMonth.addEventListener('click', () => changeMonth(1));
+  renderMonth();
+  bookingForm.hidden = false;
+  const requestedPlan = new URLSearchParams(window.location.search).get('plan');
+  if ([...planField.options].some((option) => option.value && option.value === requestedPlan)) {
+    planField.value = requestedPlan;
+  }
+  nameField.addEventListener('input', () => nameField.setCustomValidity(''));
+
+  bookingForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const name = nameField.value.trim();
+    nameField.setCustomValidity(name ? '' : 'Enter your name.');
+    if (!bookingForm.reportValidity()) return;
+    if (!dateField.value || !isBookable(new Date(dateField.value + 'T12:00:00'))) {
+      selection.hidden = false;
+      selection.textContent = 'Choose a date available on the calendar.';
+      calendar.querySelector('button:not(:disabled)')?.focus();
+      return;
+    }
+
+    const plan = planField.selectedOptions[0].textContent;
+    const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' })
+      .format(new Date(dateField.value + 'T12:00:00'));
+    const special = isSpecialWeek(dateField.value);
+    const [hour, minute] = timeField.value.split(':').map(Number);
+    const time = `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+    const when = special ? sessionField.selectedOptions[0].textContent + ' Eastern' : time;
+    const message = `Hi Victor, I'm ${name}. I'd like to book ${plan} on ${date} at ${when}. Is there a spot available?`;
+    const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const separator = isAppleMobile ? '&' : '?';
+    window.location.href = `sms:+15026413631${separator}body=${encodeURIComponent(message)}`;
+  });
 </script>
 </body>
 </html>
