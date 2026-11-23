@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Request a training session with Victor Anderson.">
+<title>Book a session | Victory Sports Performance</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="training-pages.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="wrap header">
+<a href="./" class="brand"><span class="mark" aria-hidden="true">V</span><span class="brand-name">Victory<span>Sports Performance</span></span></a>
+<nav aria-label="Main navigation"><a href="./training.html">Training</a><a href="./pricing.html">Pricing</a><a href="./book.html" aria-current="page">Book</a><a href="./victor-anderson.html">About Vic</a></nav>
+<a class="button outline" href="tel:+15026413631">Call Vic</a>
+</header>
+<main id="main" class="inner-page">
+<section class="booking" id="booking" aria-labelledby="booking-heading">
+  <div class="wrap section booking-grid">
+    <div class="booking-copy">
+      <h1 id="booking-heading">Request a session</h1>
+      <p>Training is available Monday, Tuesday, and Wednesday. Tell Vic what you’re interested in and when you’d like to train. He’ll text you back to confirm a time.</p>
+    </div>
+    <form class="booking-form" id="booking-form" aria-describedby="booking-help" hidden>
+      <label>Your name <input name="clientName" autocomplete="name" maxlength="80" required></label>
+      <label>Training option
+        <select name="plan" required>
+          <option value="">Choose an option</option>
+          <option value="individual">Individual session — $50/session</option>
+          <option value="starter">Starter — $140/month</option>
+          <option value="development">Development — $200/month</option>
+          <option value="elite">Elite — $250/month</option>
+        </select>
+      </label>
+      <div class="booking-month" aria-label="Booking month" role="group">
+        <button class="button outline" type="button" id="previous-month" aria-label="Previous month">‹</button>
+        <span id="booking-month" aria-live="polite"></span>
+        <button class="button outline" type="button" id="next-month" aria-label="Next month">›</button>
+      </div>
+      <div class="booking-calendar" id="booking-calendar" role="group" aria-label="Preferred date" aria-describedby="booking-days"></div>
+      <input type="hidden" name="date">
+      <p class="booking-help" id="booking-selection" role="status" hidden></p>
+      <label>Preferred time <input type="time" name="time" required></label>
+      <p class="booking-help" id="booking-days">Choose a Monday, Tuesday, or Wednesday.</p>
+      <button class="button" type="submit">Open text message</button>
+      <p class="booking-help" id="booking-help">Tap Send in your texting app, or <a href="tel:+15026413631">call 502-641-3631</a> to book.</p>
+    </form>
+    <noscript><p><a href="tel:+15026413631">Call 502-641-3631 to request a session.</a></p></noscript>
+  </div>
+</section>
+</main>
+<footer class="wrap footer"><a href="./" class="brand"><span class="mark" aria-hidden="true">V</span><span class="brand-name">Victory<span>Sports Performance</span></span></a><span>Victor Anderson</span></footer>
+
+
+<script>
+  const bookingForm = document.querySelector('#booking-form');
+  const nameField = bookingForm.elements.namedItem('clientName');
+  const planField = bookingForm.elements.namedItem('plan');
+  const dateField = bookingForm.elements.namedItem('date');
+  const timeField = bookingForm.elements.namedItem('time');
+
+  const previousMonth = document.querySelector('#previous-month');
+  const nextMonth = document.querySelector('#next-month');
+  const monthLabel = document.querySelector('#booking-month');
+  const calendar = document.querySelector('#booking-calendar');
+  const selection = document.querySelector('#booking-selection');
+  const monthFormat = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+  const dayFormat = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  const now = new Date();
+  let shownMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  function dateKey(date) {
+    return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+      .map((part, index) => String(part).padStart(index === 0 ? 4 : 2, '0')).join('-');
+  }
+
+  function isBookable(date) {
+    const weekday = date.getDay();
+    return weekday >= 1 && weekday <= 3 && dateKey(date) >= dateKey(new Date());
+  }
+
+  function renderMonth() {
+    const year = shownMonth.getFullYear();
+    const month = shownMonth.getMonth();
+    const days = new Date(year, month + 1, 0).getDate();
+    monthLabel.textContent = monthFormat.format(shownMonth);
+    previousMonth.disabled = dateKey(shownMonth).slice(0, 7) <= dateKey(new Date()).slice(0, 7);
+    calendar.replaceChildren();
+    for (const weekday of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']) {
+      const heading = document.createElement('span');
+      heading.textContent = weekday;
+      heading.setAttribute('aria-hidden', 'true');
+      calendar.append(heading);
+    }
+
+    const offset = (shownMonth.getDay() + 6) % 7;
+    for (let day = 1; day <= days; day++) {
+      const date = new Date(year, month, day, 12);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = day;
+      button.disabled = !isBookable(date);
+      button.setAttribute('aria-label', dayFormat.format(date));
+      button.setAttribute('aria-pressed', String(dateField.value === dateKey(date)));
+      if (day === 1) button.style.gridColumnStart = offset + 1;
+      button.addEventListener('click', () => {
+        calendar.querySelector('[aria-pressed="true"]')?.setAttribute('aria-pressed', 'false');
+        button.setAttribute('aria-pressed', 'true');
+        dateField.value = dateKey(date);
+        selection.hidden = false;
+        selection.textContent = 'Selected: ' + dayFormat.format(date) + ', ' + year;
+      });
+      calendar.append(button);
+    }
+  }
+
+  function changeMonth(offset) {
+    shownMonth = new Date(shownMonth.getFullYear(), shownMonth.getMonth() + offset, 1);
+    renderMonth();
+  }
+
+  previousMonth.addEventListener('click', () => changeMonth(-1));
+  nextMonth.addEventListener('click', () => changeMonth(1));
+  renderMonth();
+  bookingForm.hidden = false;
+  const requestedPlan = new URLSearchParams(window.location.search).get('plan');
+  if ([...planField.options].some((option) => option.value && option.value === requestedPlan)) {
+    planField.value = requestedPlan;
+  }
+  nameField.addEventListener('input', () => nameField.setCustomValidity(''));
+
+  bookingForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const name = nameField.value.trim();
+    nameField.setCustomValidity(name ? '' : 'Enter your name.');
+    if (!bookingForm.reportValidity()) return;
+    if (!dateField.value || !isBookable(new Date(dateField.value + 'T12:00:00'))) {
+      selection.hidden = false;
+      selection.textContent = 'Choose an upcoming Monday, Tuesday, or Wednesday.';
+      calendar.querySelector('button:not(:disabled)')?.focus();
+      return;
+    }
+
+    const plan = planField.selectedOptions[0].textContent;
+    const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' })
+      .format(new Date(dateField.value + 'T12:00:00'));
+    const [hour, minute] = timeField.value.split(':').map(Number);
+    const time = `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+    const message = `Hi Victor, I'm ${name}. I'd like to book ${plan} on ${date} at ${time}. Is that time available?`;
+    const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const separator = isAppleMobile ? '&' : '?';
+    window.location.href = `sms:+15026413631${separator}body=${encodeURIComponent(message)}`;
+  });
+</script>
+</body>
+</html>

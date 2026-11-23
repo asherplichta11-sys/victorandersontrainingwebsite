@@ -1,0 +1,75 @@
+:root {
+  --display: system-ui, sans-serif;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-block: clamp(2.5rem, 5vw, 4.5rem);
+}
+.hero h1 { font-size: clamp(2.8rem, 6.2vw, 6rem); text-wrap: balance; }
+.hero .field-photo img { aspect-ratio: auto; object-fit: contain; max-width: 25rem; margin-inline: auto; }
+.training-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+}
+.field-photo { margin: 0; min-width: 0; }
+.field-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+  object-position: center 55%;
+  background: var(--panel);
+  border-radius: .25rem;
+}
+.training-grid .field-photo { display: grid; gap: .8rem; }
+.training-grid .field-photo img { aspect-ratio: auto; object-fit: contain; }
+.training-grid .field-photo img:first-child { max-width: 21rem; margin-inline: auto; }
+@media (max-width: 760px) {
+  .hero-inner, .training-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: clamp(2.7rem, 10vw, 5rem); }
+  .field-photo img { aspect-ratio: 4 / 3; }
+}
+.coach-name { margin: 0 0 .8rem; color: var(--paper); font-weight: 700; }
+h1 { font-size: clamp(2.8rem, 8.8vw, 7.4rem); letter-spacing: -.075em; line-height: .96; }
+h2 { font-size: clamp(2rem, 4.3vw, 3.6rem); letter-spacing: -.05em; line-height: 1.05; }
+.intro { max-width: 42ch; margin-top: 1.25rem; }
+.button { border-radius: .25rem; }
+.training-tagline { color: var(--muted); margin: .7rem 0 0; }
+.programs li::before { width: .3rem; height: .3rem; border-radius: 50%; transform: none; }
+.plans article:last-child { border-color: var(--line); }
+.price { font-size: clamp(2rem, 4vw, 3.1rem); letter-spacing: -.05em; }
+.booking { border-top: 1px solid var(--line); }
+.booking-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 6vw, 5rem); }
+.booking-copy p:last-child, .booking-help { color: var(--muted); }
+.booking-form { display: grid; gap: .9rem; }
+.booking-form[hidden] { display: none; }
+.booking-form label { display: grid; gap: .3rem; font-weight: 700; }
+.booking-month { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.booking-month button { min-width: 2.75rem; }
+.booking-month button:disabled { opacity: .5; cursor: default; }
+.booking-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .2rem; }
+.booking-calendar span { text-align: center; font-size: .8rem; color: var(--muted); }
+.booking-calendar button { padding: .45rem 0; min-width: 0; min-height: 2.5rem; border: 1px solid var(--line); border-radius: .25rem; background: var(--panel); color: var(--paper); font: inherit; cursor: pointer; }
+.booking-calendar button:hover:not(:disabled) { border-color: var(--paper); }
+.booking-calendar button:disabled { opacity: .45; cursor: default; }
+.booking-calendar button[aria-pressed="true"] { background: var(--red); border-color: var(--paper); }
+.booking-calendar button:focus-visible { outline: 2px solid var(--paper); outline-offset: 1px; }
+.booking-form input, .booking-form select { min-width: 0; width: 100%; padding: .7rem; border: 1px solid #777777; background: var(--panel); color: var(--paper); font: inherit; }
+.booking-form :is(input, select):focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+.booking-form .button { justify-self: start; font: inherit; font-weight: 800; cursor: pointer; }
+.booking-help { margin: 0; font-size: .9rem; }
+@media (max-width: 680px) { .booking-grid { grid-template-columns: 1fr; } }
+
+.inner-page h1 { font-size: clamp(2.6rem, 7vw, 5.2rem); line-height: 1.02; }
+.inner-page .programs { margin-bottom: 1.4rem; }
+.page-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: .8rem; }
+.page-links article { padding: 1.3rem; border: 1px solid var(--line); border-top: 3px solid var(--red); background: var(--panel); }
+.page-links h2 { font-size: 1.45rem; }
+.page-links p { color: var(--muted); }
+.page-links a { font-weight: 750; text-underline-offset: .22em; }
